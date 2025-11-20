@@ -1,0 +1,21 @@
+# ninja log v6
+0	3	1763632076066205015	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-mkdir	c904bbdad314a6c2
+0	3	1763632076066205015	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-mkdir	c904bbdad314a6c2
+3	1178	1763632077242184297	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-download	53568a33bb380b34
+3	1178	1763632077242184297	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-download	53568a33bb380b34
+1178	1184	1763632077242184297	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-update	e57a5e91f39f88ec
+1178	1184	1763632077242184297	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-update	e57a5e91f39f88ec
+1184	1186	1763632077250184157	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-patch	6d406bc13b96b4f1
+1184	1186	1763632077250184157	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-patch	6d406bc13b96b4f1
+1186	1188	1763632077252184122	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-configure	553a9d441bf78dba
+1186	1188	1763632077252184122	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-configure	553a9d441bf78dba
+1188	1191	1763632077254184087	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-build	44a520e41caa48ce
+1188	1191	1763632077254184087	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-build	44a520e41caa48ce
+1191	1193	1763632077257184034	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-install	1400ae9c83a9b21d
+1191	1193	1763632077257184034	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-install	1400ae9c83a9b21d
+1193	1195	1763632077259183999	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-test	1828545677e1ab75
+1193	1195	1763632077259183999	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-test	1828545677e1ab75
+1195	1198	1763632077262183946	CMakeFiles/cpr-populate-complete	da1b48906096eb25
+1195	1198	1763632077262183946	cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-done	da1b48906096eb25
+1195	1198	1763632077262183946	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/CMakeFiles/cpr-populate-complete	da1b48906096eb25
+1195	1198	1763632077262183946	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/cpr-subbuild/cpr-populate-prefix/src/cpr-populate-stamp/cpr-populate-done	da1b48906096eb25

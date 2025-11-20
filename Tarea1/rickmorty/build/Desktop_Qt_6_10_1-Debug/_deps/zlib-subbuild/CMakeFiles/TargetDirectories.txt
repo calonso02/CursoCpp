@@ -1,0 +1,3 @@
+/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/CMakeFiles/zlib-populate.dir
+/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/CMakeFiles/edit_cache.dir
+/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/CMakeFiles/rebuild_cache.dir

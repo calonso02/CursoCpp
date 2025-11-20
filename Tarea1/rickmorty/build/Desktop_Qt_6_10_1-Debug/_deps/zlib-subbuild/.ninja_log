@@ -1,0 +1,21 @@
+# ninja log v6
+0	3	1763632077694176366	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-mkdir	d67d033d38fe4a21
+0	3	1763632077694176366	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-mkdir	d67d033d38fe4a21
+3	2284	1763632079975136595	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-download	e6d37babf81b52b0
+3	2284	1763632079975136595	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-download	e6d37babf81b52b0
+2284	2290	1763632079975136595	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-update	28e6321d171aebc4
+2284	2290	1763632079975136595	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-update	28e6321d171aebc4
+2290	2292	1763632079983136456	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-patch	6f20e6a51577ea21
+2290	2292	1763632079983136456	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-patch	6f20e6a51577ea21
+2292	2295	1763632079985136421	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-configure	7c5f1473a49677f6
+2292	2295	1763632079985136421	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-configure	7c5f1473a49677f6
+2295	2297	1763632079988136369	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-build	1bf3d8545234b1db
+2295	2297	1763632079988136369	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-build	1bf3d8545234b1db
+2297	2299	1763632079990136334	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-install	daf21936a15e75c5
+2297	2299	1763632079990136334	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-install	daf21936a15e75c5
+2299	2301	1763632079992136299	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-test	6fecfff22ac72384
+2299	2301	1763632079992136299	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-test	6fecfff22ac72384
+2301	2304	1763632079995136247	CMakeFiles/zlib-populate-complete	fc9ae85d7ccedd66
+2301	2304	1763632079995136247	zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-done	fc9ae85d7ccedd66
+2301	2304	1763632079995136247	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/CMakeFiles/zlib-populate-complete	fc9ae85d7ccedd66
+2301	2304	1763632079995136247	/home/candi/Proyectos/OesiaCurso/rickmorty/build/Desktop_Qt_6_10_1-Debug/_deps/zlib-subbuild/zlib-populate-prefix/src/zlib-populate-stamp/zlib-populate-done	fc9ae85d7ccedd66
