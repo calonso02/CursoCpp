@@ -1,4 +1,4 @@
-<h1>Grupo</h1>
+<h1>Grupo Los Leones</h1>
 
 <h2>Integrantes:</h2>
 <ul>
