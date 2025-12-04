@@ -124,7 +124,7 @@ bool isSeeComand(const string &s)
     return std::regex_search(s, seeRegex);
 }
 
-bool isFacingBall(const string &s)
+/*bool isFacingBall(const string &s)
 {
     std::regex ballRegex(
         R"(\(\(b\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
@@ -162,7 +162,7 @@ string getGoalDir(const string &s, const Player &p)
             return direction;
         }
     }
-}
+}*/
 
 // main with two args
 int main(int argc, char *argv[])
