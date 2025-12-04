@@ -4,6 +4,7 @@
 #include <MinimalSocket/udp/UdpSocket.h>
 #include <vector>
 #include <regex>
+#include "seen_object.cpp"
 
 using namespace std;
 
@@ -213,33 +214,38 @@ int main(int argc, char *argv[])
     MinimalSocket::Address server_udp = MinimalSocket::Address{"127.0.0.1", other_sender_udp.getPort()};
 
     udp_socket.sendTo(player.PosicionInicial(), server_udp);
+    SeenObject balon("b");
+    SeenObject porteriaDer("g r");
+    SeenObject porteriaIzq("g l");
 
     while (true)
     {
         auto received_message = udp_socket.receive(message_max_size);
         std::string received_message_content = received_message->received_message;
-        std::cout << received_message_content << std::endl;
+        // std::cout << received_message_content << std::endl;
         if (isSeeComand(received_message_content))
         {
-            if (!isFacingBall(received_message_content))
+            balon.parse_message(received_message_content);
+
+            if (std::abs(balon.get_angle()) > 5.0)
             {
-                udp_socket.sendTo("(turn 10)", server_udp);
+                if (std::abs(balon.get_dist()) > 0.4)
+                {
+                    std::string turn_command = "(turn " + std::to_string(balon.get_angle()) + ")";
+                    udp_socket.sendTo(turn_command, server_udp);
+                }
+                else
+                {
+                    double angle_to_goal = porteriaDer.get_angle();
+                    std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
+                    udp_socket.sendTo(kick_cmd, server_udp);
+                }
             }
             else
             {
-                if (/*Esta lejos de la bola*/ )
-                    udp_socket.sendTo("(dash 100)", server_udp);
-                else //no esta lejos bola 
-                {
-                    string message{"(kick 50 " + getGoalDir(received_message_content, player) + ")"};
-                    udp_socket.sendTo(message, server_udp);
-                }
+                udp_socket.sendTo("(dash 100)", server_udp);
             }
         }
-        else
-        {
-        }
     }
-
     return 0;
 }

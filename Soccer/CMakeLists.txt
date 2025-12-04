@@ -32,6 +32,7 @@ set(SOURCE_FILES
     #parsehearmessages.cpp
     #types.cpp
     #Stictoc.cpp
+    #seen_object.cpp
 )
 
 add_executable(player ${SOURCE_FILES})
