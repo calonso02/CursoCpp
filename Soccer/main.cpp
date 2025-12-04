@@ -3,64 +3,164 @@
 #include <string>
 #include <MinimalSocket/udp/UdpSocket.h>
 #include <vector>
+#include <regex>
 
 using namespace std;
 
-struct Player {
+struct Player
+{
 
     string unum, playmode, side;
 
-    void ParseInit(string msg) {
+    void ParseInit(string msg)
+    {
         istringstream iss(msg);
         std::string initWord;
         iss >> initWord >> side >> unum >> playmode;
     }
 
-    string PosicionInicial() {
+    string PosicionInicial()
+    {
 
         string command{};
 
-        if (side == "r") {
-            switch (std::stoi(unum)) {
-                case 1: command = "(move 53 0)"; break;     // Portero
-                case 2: command = "(move 42 -22)"; break;   // Lateral Derecho
-                case 3: command = "(move 42 22)"; break;    // Lateral Izquierdo
-                case 4: command = "(move 46 -8)"; break;    // Central Derecho
-                case 5: command = "(move 46 8)"; break;     // Central Izquierdo
-                case 6: command = "(move 35 0)"; break;     // Pivote (MCD)
-                case 7: command = "(move 10 -28)"; break;   // Extremo Derecho
-                case 8: command = "(move 25 -10)"; break;   // Interior Derecho
-                case 9: command = "(move 5 0)"; break;      // Delantero Centro
-                case 10: command = "(move 25 10)"; break;   // Interior Izquierdo
-                case 11: command = "(move 10 28)"; break;   // Extremo Izquierdo
-                default: break;
-            }
-        } else {
-            switch (std::stoi(unum)) {
-                case 1: command = "(move -53 0)"; break;    // Portero
-                case 2: command = "(move -42 -22)"; break;  // Lateral Derecho
-                case 3: command = "(move -42 22)"; break;   // Lateral Izquierdo
-                case 4: command = "(move -46 -8)"; break;   // Central Derecho
-                case 5: command = "(move -46 8)"; break;    // Central Izquierdo
-                case 6: command = "(move -35 0)"; break;    // Pivote (MCD)
-                case 7: command = "(move -10 -28)"; break;  // Extremo Derecho
-                case 8: command = "(move -25 -10)"; break;  // Interior Derecho
-                case 9: command = "(move -5 0)"; break;     // Delantero Centro
-                case 10: command = "(move -25 10)"; break;  // Interior Izquierdo
-                case 11: command = "(move -10 28)"; break;  // Extremo Izquierdo
-                default: break;
+        if (side == "r")
+        {
+            switch (std::stoi(unum))
+            {
+            case 1:
+                command = "(move 53 0)";
+                break; // Portero
+            case 2:
+                command = "(move 42 -22)";
+                break; // Lateral Derecho
+            case 3:
+                command = "(move 42 22)";
+                break; // Lateral Izquierdo
+            case 4:
+                command = "(move 46 -8)";
+                break; // Central Derecho
+            case 5:
+                command = "(move 46 8)";
+                break; // Central Izquierdo
+            case 6:
+                command = "(move 35 0)";
+                break; // Pivote (MCD)
+            case 7:
+                command = "(move 10 -28)";
+                break; // Extremo Derecho
+            case 8:
+                command = "(move 25 -10)";
+                break; // Interior Derecho
+            case 9:
+                command = "(move 5 0)";
+                break; // Delantero Centro
+            case 10:
+                command = "(move 25 10)";
+                break; // Interior Izquierdo
+            case 11:
+                command = "(move 10 28)";
+                break; // Extremo Izquierdo
+            default:
+                break;
             }
         }
-
+        else
+        {
+            switch (std::stoi(unum))
+            {
+            case 1:
+                command = "(move -53 0)";
+                break; // Portero
+            case 2:
+                command = "(move -42 -22)";
+                break; // Lateral Derecho
+            case 3:
+                command = "(move -42 22)";
+                break; // Lateral Izquierdo
+            case 4:
+                command = "(move -46 -8)";
+                break; // Central Derecho
+            case 5:
+                command = "(move -46 8)";
+                break; // Central Izquierdo
+            case 6:
+                command = "(move -35 0)";
+                break; // Pivote (MCD)
+            case 7:
+                command = "(move -10 -28)";
+                break; // Extremo Derecho
+            case 8:
+                command = "(move -25 -10)";
+                break; // Interior Derecho
+            case 9:
+                command = "(move -5 0)";
+                break; // Delantero Centro
+            case 10:
+                command = "(move -25 10)";
+                break; // Interior Izquierdo
+            case 11:
+                command = "(move -10 28)";
+                break; // Extremo Izquierdo
+            default:
+                break;
+            }
+        }
+        cout << command << endl;
         return command;
     }
-
 };
 
-
-ostream& operator <<(ostream &os, const Player &player) {
-    os << "Jugador pos " << player.unum << " Lado " << player.side << endl;
+ostream &operator<<(ostream &os, const Player &player)
+{
+    os << "Jugador pos " << player.unum << " Lado " << player.side << " Play Mode " << player.playmode << endl;
     return os;
+}
+
+bool isSeeComand(const string &s)
+{
+    std::regex seeRegex("^\\(see\\s");
+    return std::regex_search(s, seeRegex);
+}
+
+bool isFacingBall(const string &s)
+{
+    std::regex ballRegex(
+        R"(\(\(b\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
+    std::smatch match;
+
+    if (std::regex_search(s, match, ballRegex))
+    {
+        auto distance = std::stod(match[1]);
+        auto direction = std::stod(match[2]);
+
+        return direction <= 15 && direction >= -15;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+string getGoalDir(const string &s, const Player &p)
+{
+    std::regex goalRegexR(
+        R"(\(\(g\sr\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
+
+    std::regex goalRegexL(
+        R"(\(\(g\sl\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
+
+    std::smatch match;
+    if (p.side == "l")
+    {
+        if (std::regex_search(s, match, goalRegexR))
+        {
+            auto distance = std::stod(match[1]);
+            auto direction = match[2];
+
+            return direction;
+        }
+    }
 }
 
 // main with two args
@@ -94,8 +194,6 @@ int main(int argc, char *argv[])
     MinimalSocket::Address other_recipient_udp = MinimalSocket::Address{"127.0.0.1", 6000};
     cout << "(init " + team_name + "(version 19))";
 
-    string isGoalie = (this_socket_port == 5550) ? "[(goalie)]" : "";
-
     udp_socket.sendTo("(init " + team_name + "(version 19))", other_recipient_udp);
     cout << "Init Message sent" << endl;
 
@@ -108,7 +206,7 @@ int main(int argc, char *argv[])
 
     Player player;
     player.ParseInit(received_message_content);
-    //cout << player;
+    // cout << player;
 
     // update upd port to provided by the other udp
     MinimalSocket::Address other_sender_udp = received_message->sender;
@@ -117,7 +215,31 @@ int main(int argc, char *argv[])
     udp_socket.sendTo(player.PosicionInicial(), server_udp);
 
     while (true)
-    {}
-    
+    {
+        auto received_message = udp_socket.receive(message_max_size);
+        std::string received_message_content = received_message->received_message;
+        std::cout << received_message_content << std::endl;
+        if (isSeeComand(received_message_content))
+        {
+            if (!isFacingBall(received_message_content))
+            {
+                udp_socket.sendTo("(turn 10)", server_udp);
+            }
+            else
+            {
+                if (/*Esta lejos de la bola*/ )
+                    udp_socket.sendTo("(dash 100)", server_udp);
+                else //no esta lejos bola 
+                {
+                    string message{"(kick 50 " + getGoalDir(received_message_content, player) + ")"};
+                    udp_socket.sendTo(message, server_udp);
+                }
+            }
+        }
+        else
+        {
+        }
+    }
+
     return 0;
 }
