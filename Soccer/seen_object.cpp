@@ -10,7 +10,7 @@ private:
     double angle;     // Ángulo (grados)
 public:
     SeenObject(const std::string &n) : name(n) {}
-    void parse_message(const std::string &s);
+    bool parse_message(const std::string &s);
     // Devuelve el angulo relativo al jugador
     double get_dist() const;
     // Devuelve la distancia relativa al jugador
@@ -27,7 +27,7 @@ inline double SeenObject::get_angle() const
     return angle;
 }
 
-void SeenObject::parse_message(const std::string &s)
+bool SeenObject::parse_message(const std::string &s)
 {
     std::string pattern_str = R"(\(\()" + name + R"(\)\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)(?:\s+([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+))?\))";
 
@@ -44,5 +44,8 @@ void SeenObject::parse_message(const std::string &s)
             dist = std::stod(dist_str);
             angle = std::stod(angle_str);
         }
+        return true;
     }
+    else
+        return false;
 }

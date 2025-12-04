@@ -225,25 +225,36 @@ int main(int argc, char *argv[])
         // std::cout << received_message_content << std::endl;
         if (isSeeComand(received_message_content))
         {
-            balon.parse_message(received_message_content);
-
-            if (std::abs(balon.get_angle()) > 5.0)
+            porteriaDer.parse_message(received_message_content);
+            porteriaIzq.parse_message(received_message_content);
+            if (balon.parse_message(received_message_content))
             {
-                if (std::abs(balon.get_dist()) > 0.4)
+
+                if (balon.get_angle() >= -10.0 && balon.get_angle() <= 10.0)
                 {
-                    std::string turn_command = "(turn " + std::to_string(balon.get_angle()) + ")";
-                    udp_socket.sendTo(turn_command, server_udp);
+                    std::cout << "Hola" << balon.get_dist();
+                    if (std::abs(balon.get_dist()) > 1)
+                    {
+                        std::string turn_command = "(dash 75)";
+                
+                        udp_socket.sendTo(turn_command, server_udp);
+                    }
+                    else
+                    {
+                        double angle_to_goal = (player.side == "l") ? porteriaDer.get_angle() : porteriaIzq.get_angle();
+                        std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
+                        udp_socket.sendTo(kick_cmd, server_udp);
+                    }
                 }
                 else
                 {
-                    double angle_to_goal = porteriaDer.get_angle();
-                    std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
-                    udp_socket.sendTo(kick_cmd, server_udp);
+                    udp_socket.sendTo("(turn 15)", server_udp);
                 }
             }
             else
             {
-                udp_socket.sendTo("(dash 100)", server_udp);
+                std::string turn_command = "(turn 25)";
+                udp_socket.sendTo(turn_command, server_udp);
             }
         }
     }
