@@ -222,7 +222,6 @@ int main(int argc, char *argv[])
     {
         auto received_message = udp_socket.receive(message_max_size);
         std::string received_message_content = received_message->received_message;
-        // std::cout << received_message_content << std::endl;
         if (isSeeComand(received_message_content))
         {
             porteriaDer.parse_message(received_message_content);
@@ -232,7 +231,6 @@ int main(int argc, char *argv[])
 
                 if (balon.get_angle() >= -10.0 && balon.get_angle() <= 10.0)
                 {
-                    std::cout << "Hola" << balon.get_dist();
                     if (std::abs(balon.get_dist()) > 1)
                     {
                         std::string turn_command = "(dash 75)";
