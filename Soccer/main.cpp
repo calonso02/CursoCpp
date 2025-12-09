@@ -25,7 +25,7 @@ struct Player
 
         string command{};
 
-        if (side == "r")
+        /*if (side == "s")
         {
             switch (std::stoi(unum))
             {
@@ -67,46 +67,46 @@ struct Player
             }
         }
         else
+        {*/
+        switch (std::stoi(unum))
         {
-            switch (std::stoi(unum))
-            {
-            case 1:
-                command = "(move -53 0)";
-                break; // Portero
-            case 2:
-                command = "(move -42 -22)";
-                break; // Lateral Derecho
-            case 3:
-                command = "(move -42 22)";
-                break; // Lateral Izquierdo
-            case 4:
-                command = "(move -46 -8)";
-                break; // Central Derecho
-            case 5:
-                command = "(move -46 8)";
-                break; // Central Izquierdo
-            case 6:
-                command = "(move -35 0)";
-                break; // Pivote (MCD)
-            case 7:
-                command = "(move -10 -28)";
-                break; // Extremo Derecho
-            case 8:
-                command = "(move -25 -10)";
-                break; // Interior Derecho
-            case 9:
-                command = "(move -5 0)";
-                break; // Delantero Centro
-            case 10:
-                command = "(move -25 10)";
-                break; // Interior Izquierdo
-            case 11:
-                command = "(move -10 28)";
-                break; // Extremo Izquierdo
-            default:
-                break;
-            }
+        case 1:
+            command = "(move -53 0)";
+            break; // Portero
+        case 2:
+            command = "(move -42 -22)";
+            break; // Lateral Derecho
+        case 3:
+            command = "(move -42 22)";
+            break; // Lateral Izquierdo
+        case 4:
+            command = "(move -46 -8)";
+            break; // Central Derecho
+        case 5:
+            command = "(move -46 8)";
+            break; // Central Izquierdo
+        case 6:
+            command = "(move -35 0)";
+            break; // Pivote (MCD)
+        case 7:
+            command = "(move -10 -28)";
+            break; // Extremo Derecho
+        case 8:
+            command = "(move -25 -10)";
+            break; // Interior Derecho
+        case 9:
+            command = "(move -5 0)";
+            break; // Delantero Centro
+        case 10:
+            command = "(move -25 10)";
+            break; // Interior Izquierdo
+        case 11:
+            command = "(move -10 28)";
+            break; // Extremo Izquierdo
+        default:
+            break;
         }
+        //}
         cout << command << endl;
         return command;
     }
@@ -123,46 +123,6 @@ bool isSeeComand(const string &s)
     std::regex seeRegex("^\\(see\\s");
     return std::regex_search(s, seeRegex);
 }
-
-/*bool isFacingBall(const string &s)
-{
-    std::regex ballRegex(
-        R"(\(\(b\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
-    std::smatch match;
-
-    if (std::regex_search(s, match, ballRegex))
-    {
-        auto distance = std::stod(match[1]);
-        auto direction = std::stod(match[2]);
-
-        return direction <= 15 && direction >= -15;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-string getGoalDir(const string &s, const Player &p)
-{
-    std::regex goalRegexR(
-        R"(\(\(g\sr\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
-
-    std::regex goalRegexL(
-        R"(\(\(g\sl\)\s+([-\d\.]+)\s+([-\d\.]+)(?:\s+([-\d\.]+)\s+([-\d\.]+))?)");
-
-    std::smatch match;
-    if (p.side == "l")
-    {
-        if (std::regex_search(s, match, goalRegexR))
-        {
-            auto distance = std::stod(match[1]);
-            auto direction = match[2];
-
-            return direction;
-        }
-    }
-}*/
 
 // main with two args
 int main(int argc, char *argv[])
@@ -224,6 +184,10 @@ int main(int argc, char *argv[])
         std::string received_message_content = received_message->received_message;
         if (isSeeComand(received_message_content))
         {
+            std::cout << "***********************************" << std::endl;
+            std::cout << received_message_content << endl; 
+            std::cout << "***********************************" << std::endl;
+
             porteriaDer.parse_message(received_message_content);
             porteriaIzq.parse_message(received_message_content);
             if (balon.parse_message(received_message_content))
@@ -234,7 +198,7 @@ int main(int argc, char *argv[])
                     if (std::abs(balon.get_dist()) > 1)
                     {
                         std::string turn_command = "(dash 75)";
-                
+
                         udp_socket.sendTo(turn_command, server_udp);
                     }
                     else
