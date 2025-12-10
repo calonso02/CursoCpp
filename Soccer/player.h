@@ -1,0 +1,41 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+// #include "trilaterate.cpp"
+
+class Player
+{
+public:
+    // Player() : posicionGlobal{0.0, 0.0} {}
+
+    const std::string &getUnum() const { return unum; };
+    const std::string &getPlaymode() const { return playmode; };
+    const std::string &getSide() const { return side; }
+    const std::string &getCommand() const { return command; }
+
+    void setUnum(const std::string &s) { unum = s; }
+    void setPlaymode(const std::string &s) { playmode = s; }
+    void setSide(const std::string &s) { side = s; }
+    void setCommand(const std::string &s) { command = s; }
+
+    void actualizarEstadoVisual(std::string serverMsg);
+
+    void parseInit(std::string msg);
+
+    void posicionInicial() { command = posicionesIniciales.at(std::stoi(unum)); }
+
+    void decision(const std::string& msg);
+
+private:
+    std::string unum, playmode, side, command;
+    // Vector2D<double> posicionGlobal;
+    bool posicionEsValida = false;
+
+    static std::vector<std::string> posicionesIniciales;
+};
+
+#endif

@@ -4,123 +4,20 @@
 #include <MinimalSocket/udp/UdpSocket.h>
 #include <vector>
 #include <regex>
-#include "seen_object.cpp"
+#include "seen_object.h"
+#include "player.h"
 
 using namespace std;
-
-struct Player
-{
-
-    string unum, playmode, side;
-
-    void ParseInit(string msg)
-    {
-        istringstream iss(msg);
-        std::string initWord;
-        iss >> initWord >> side >> unum >> playmode;
-    }
-
-    string PosicionInicial()
-    {
-
-        string command{};
-
-        /*if (side == "s")
-        {
-            switch (std::stoi(unum))
-            {
-            case 1:
-                command = "(move 53 0)";
-                break; // Portero
-            case 2:
-                command = "(move 42 -22)";
-                break; // Lateral Derecho
-            case 3:
-                command = "(move 42 22)";
-                break; // Lateral Izquierdo
-            case 4:
-                command = "(move 46 -8)";
-                break; // Central Derecho
-            case 5:
-                command = "(move 46 8)";
-                break; // Central Izquierdo
-            case 6:
-                command = "(move 35 0)";
-                break; // Pivote (MCD)
-            case 7:
-                command = "(move 10 -28)";
-                break; // Extremo Derecho
-            case 8:
-                command = "(move 25 -10)";
-                break; // Interior Derecho
-            case 9:
-                command = "(move 5 0)";
-                break; // Delantero Centro
-            case 10:
-                command = "(move 25 10)";
-                break; // Interior Izquierdo
-            case 11:
-                command = "(move 10 28)";
-                break; // Extremo Izquierdo
-            default:
-                break;
-            }
-        }
-        else
-        {*/
-        switch (std::stoi(unum))
-        {
-        case 1:
-            command = "(move -53 0)";
-            break; // Portero
-        case 2:
-            command = "(move -42 -22)";
-            break; // Lateral Derecho
-        case 3:
-            command = "(move -42 22)";
-            break; // Lateral Izquierdo
-        case 4:
-            command = "(move -46 -8)";
-            break; // Central Derecho
-        case 5:
-            command = "(move -46 8)";
-            break; // Central Izquierdo
-        case 6:
-            command = "(move -35 0)";
-            break; // Pivote (MCD)
-        case 7:
-            command = "(move -10 -28)";
-            break; // Extremo Derecho
-        case 8:
-            command = "(move -25 -10)";
-            break; // Interior Derecho
-        case 9:
-            command = "(move -5 0)";
-            break; // Delantero Centro
-        case 10:
-            command = "(move -25 10)";
-            break; // Interior Izquierdo
-        case 11:
-            command = "(move -10 28)";
-            break; // Extremo Izquierdo
-        default:
-            break;
-        }
-        //}
-        cout << command << endl;
-        return command;
-    }
-};
-
-ostream &operator<<(ostream &os, const Player &player)
-{
-    os << "Jugador pos " << player.unum << " Lado " << player.side << " Play Mode " << player.playmode << endl;
-    return os;
-}
 
 bool isSeeComand(const string &s)
 {
     std::regex seeRegex("^\\(see\\s");
+    return std::regex_search(s, seeRegex);
+}
+
+bool isHearComand(const string &s)
+{
+    std::regex seeRegex("^\\(hear\\s");
     return std::regex_search(s, seeRegex);
 }
 
@@ -163,17 +60,15 @@ int main(int argc, char *argv[])
     auto received_message = udp_socket.receive(message_max_size);
     std::string received_message_content = received_message->received_message;
 
-    std::cout << received_message_content << std::endl;
-
     Player player;
-    player.ParseInit(received_message_content);
-    // cout << player;
+    player.parseInit(received_message_content);
 
-    // update upd port to provided by the other udp
     MinimalSocket::Address other_sender_udp = received_message->sender;
     MinimalSocket::Address server_udp = MinimalSocket::Address{"127.0.0.1", other_sender_udp.getPort()};
 
-    udp_socket.sendTo(player.PosicionInicial(), server_udp);
+    player.posicionInicial();
+    udp_socket.sendTo(player.getCommand(), server_udp);
+
     SeenObject balon("b");
     SeenObject porteriaDer("g r");
     SeenObject porteriaIzq("g l");
@@ -182,12 +77,10 @@ int main(int argc, char *argv[])
     {
         auto received_message = udp_socket.receive(message_max_size);
         std::string received_message_content = received_message->received_message;
+
         if (isSeeComand(received_message_content))
         {
-            std::cout << "***********************************" << std::endl;
-            std::cout << received_message_content << endl; 
-            std::cout << "***********************************" << std::endl;
-
+            //player.decision(received_message_content);
             porteriaDer.parse_message(received_message_content);
             porteriaIzq.parse_message(received_message_content);
             if (balon.parse_message(received_message_content))
@@ -203,7 +96,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        double angle_to_goal = (player.side == "l") ? porteriaDer.get_angle() : porteriaIzq.get_angle();
+                        double angle_to_goal = (player.getSide() == "l") ? porteriaDer.get_angle() : porteriaIzq.get_angle();
                         std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
                         udp_socket.sendTo(kick_cmd, server_udp);
                     }
@@ -218,6 +111,10 @@ int main(int argc, char *argv[])
                 std::string turn_command = "(turn 25)";
                 udp_socket.sendTo(turn_command, server_udp);
             }
+        }
+        else if (isHearComand(received_message_content))
+        {
+            // update play_mode
         }
     }
     return 0;
