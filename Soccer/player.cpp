@@ -63,17 +63,23 @@ std::ostream &operator<<(std::ostream &os, const Player &player)
     return os;
 }
 
-void Player::decision(const std::string& msg)
+void Player::decision(const std::string &msg)
 {
-    if (playmode == "before_kick_off") {
+    if (playmode == "before_kick_off" || playmode == "goal_r_?" || playmode == "goal_l_?") 
+    {
         posicionInicial();
+    }
+    if (playmode == "kick_off_L" && side == "l" ||
+        playmode == "kick_off_R" && side == "r")
+    {
+        // Logica para el saque
     }
     else if (playmode == "play_on")
     {
         switch (std::stoi(unum))
         {
         case 1: // Portero
-            
+
             break;
 
         case 2:
@@ -86,7 +92,7 @@ void Player::decision(const std::string& msg)
         case 6:
         case 7:
         case 8: // Centrocampistas
-            
+
             break;
 
         case 9:
