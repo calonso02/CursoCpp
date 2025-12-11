@@ -1,6 +1,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <cmath>
+
 template <typename T>
 struct Vector2D {
     T x;
@@ -21,7 +23,7 @@ struct Vector2D {
     }
 
     void print() const {
-        cout << "(" << x << ", " << y << ")" << endl;
+        std::cout << "(" << x << ", " << y << ")" << std::endl;
     }
 
     double getAngle() const {

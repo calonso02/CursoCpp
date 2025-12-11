@@ -6,6 +6,7 @@
 #include <regex>
 #include "seen_object.h"
 #include "player.h"
+#include "hear_message.h"
 
 using namespace std;
 
@@ -77,45 +78,70 @@ int main(int argc, char *argv[])
     {
         auto received_message = udp_socket.receive(message_max_size);
         std::string received_message_content = received_message->received_message;
+        player.actualizarEstadoVisual(received_message_content);
 
         if (isSeeComand(received_message_content))
         {
+            Vector2D posicion_deseada{0.0, 0.0};
+
+            udp_socket.sendTo(player.irA(posicion_deseada), server_udp);
+        }
+    }
+
+    /*while (true)
+    {
+        auto received_message = udp_socket.receive(message_max_size);
+        std::string received_message_content = received_message->received_message;
+
+        if (isSeeComand(received_message_content))
+        {
+            // actualizar todas las posiciones de todo el campo
+
             //player.decision(received_message_content);
-            porteriaDer.parse_message(received_message_content);
-            porteriaIzq.parse_message(received_message_content);
-            if (balon.parse_message(received_message_content))
+            /*porteriaDer.parse_message(received_message_content);
+            porteriaIzq.parse_message(received_message_content);*/
+
+    /*player.decision(posiciones_relativas);
+
+    if (balon.parse_message(received_message_content))
+    {
+        if (balon.get_angle() >= -10.0 && balon.get_angle() <= 10.0)
+        {
+            if (std::abs(balon.get_dist()) > 1)
             {
+                std::string turn_command = "(dash 75)";
 
-                if (balon.get_angle() >= -10.0 && balon.get_angle() <= 10.0)
-                {
-                    if (std::abs(balon.get_dist()) > 1)
-                    {
-                        std::string turn_command = "(dash 75)";
-
-                        udp_socket.sendTo(turn_command, server_udp);
-                    }
-                    else
-                    {
-                        double angle_to_goal = (player.getSide() == "l") ? porteriaDer.get_angle() : porteriaIzq.get_angle();
-                        std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
-                        udp_socket.sendTo(kick_cmd, server_udp);
-                    }
-                }
-                else
-                {
-                    udp_socket.sendTo("(turn 15)", server_udp);
-                }
+                udp_socket.sendTo(turn_command, server_udp);
             }
             else
             {
-                std::string turn_command = "(turn 25)";
-                udp_socket.sendTo(turn_command, server_udp);
+                double angle_to_goal = (player.getSide() == "l") ? porteriaDer.get_angle() : porteriaIzq.get_angle();
+                std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
+                udp_socket.sendTo(kick_cmd, server_udp);
             }
         }
-        else if (isHearComand(received_message_content))
+        else
         {
-            // update play_mode
+            udp_socket.sendTo("(turn 15)", server_udp);
         }
     }
+    else
+    {
+        std::string turn_command = "(turn 25)";
+        udp_socket.sendTo(turn_command, server_udp);
+    }
+}
+else if (isHearComand(received_message_content))
+{
+    HearMessage msg{};
+    msg.parseHear(received_message_content);
+    if (msg.sender == "referee")
+    {
+        player.setPlaymode(msg.message);
+    }
+    std::cout << player.getPlaymode() << std::endl;
+}
+}
+*/
     return 0;
 }

@@ -65,19 +65,21 @@ struct LocalizationUtils
     }
 };
 
-class FieldMap {
+class FieldMap
+{
 public:
     // Devuelve la posición absoluta dada la etiqueta del string (ej: "f t l 10")
-    static Vector2D<double> getFlagPos(std::string flagName) {
+    static Vector2D<double> getFlagPos(std::string flagName)
+    {
         static std::map<std::string, Vector2D<double>> landmarks = {
             // --- Banderas Centrales ---
-            {"f c",   {0.0, 0.0}},
+            {"f c", {0.0, 0.0}},
             {"f c t", {0.0, -PITCH_HALF_WIDTH}},
             {"f c b", {0.0, PITCH_HALF_WIDTH}},
 
             // --- Porterías (Goals) ---
-            {"g l",   {-PITCH_HALF_LENGTH, 0.0}},
-            {"g r",   {PITCH_HALF_LENGTH, 0.0}},
+            {"g l", {-PITCH_HALF_LENGTH, 0.0}},
+            {"g r", {PITCH_HALF_LENGTH, 0.0}},
 
             // --- Esquinas (Corners) ---
             {"f t l", {-PITCH_HALF_LENGTH, -PITCH_HALF_WIDTH}}, // Top Left
@@ -105,45 +107,52 @@ public:
             // Bottom Right (b r) -> Y positivo, X positivo
             {"f b r 10", {10.0, PITCH_HALF_WIDTH}},
             // ...
-            
+
             // --- Área de Penal (Penalty Area) ---
             {"f p l t", {-36.0, -20.16}}, // Penalty Left Top
             {"f p l c", {-36.0, 0.0}},    // Penalty Left Center
             {"f p l b", {-36.0, 20.16}},  // Penalty Left Bottom
-            
-             {"f p r t", {36.0, -20.16}}, // Penalty Right Top
+
+            {"f p r t", {36.0, -20.16}}, // Penalty Right Top
             {"f p r c", {36.0, 0.0}},    // Penalty Right Center
             {"f p r b", {36.0, 20.16}}   // Penalty Right Bottom
         };
 
-        if (landmarks.find(flagName) != landmarks.end()) {
+        if (landmarks.find(flagName) != landmarks.end())
+        {
             return landmarks[flagName];
         }
-        
-        return Vector2D<double>(0,0);
+
+        return Vector2D<double>(0, 0);
     }
 };
 
-class MessageParser {
+class MessageParser
+{
 public:
-    static std::vector<SeenObject> parseSeeMessage(std::string msg) {
+    static std::vector<SeenObject> parseSeeMessage(std::string msg)
+    {
         std::vector<SeenObject> objects;
-        
+
         // 1. Limpieza básica: Saltamos el encabezado "(see TIME"
         size_t currentPos = msg.find("(see");
-        if (currentPos == std::string::npos) return objects; // No es un mensaje 'see'
+        if (currentPos == std::string::npos)
+            return objects; // No es un mensaje 'see'
 
         // Avanzamos hasta el primer objeto visual.
         // El patrón es siempre: ((nombre) distancia direccion ...)
-        
-        while (true) {
+
+        while (true)
+        {
             // Buscamos el inicio de un objeto: "(("
             size_t startObj = msg.find("((", currentPos);
-            if (startObj == std::string::npos) break; // No hay más objetos
+            if (startObj == std::string::npos)
+                break; // No hay más objetos
 
             // Buscamos el cierre del nombre: ") "
             size_t endName = msg.find(") ", startObj);
-            if (endName == std::string::npos) break;
+            if (endName == std::string::npos)
+                break;
 
             // --- EXTRACCIÓN DEL NOMBRE ---
             // startObj + 2 salta los dos paréntesis "(("
@@ -153,8 +162,8 @@ public:
             // --- EXTRACCIÓN DE DATOS NUMÉRICOS ---
             // Creamos un stream empezando justo después del nombre para leer los doubles
             // La estructura es: ") DIST DIR ..."
-            std::stringstream ss(msg.substr(endName + 1)); 
-            
+            std::stringstream ss(msg.substr(endName + 1));
+
             double dist, angle;
             ss >> dist;  // Lee el primer número automáticamente
             ss >> angle; // Lee el segundo número automáticamente
@@ -169,7 +178,8 @@ public:
     }
 };
 
-void updateAgentState(std::string serverMsg) {
+void updateAgentState(std::string serverMsg)
+{
     // 1. Parsear el mensaje crudo
     std::vector<SeenObject> visualData = MessageParser::parseSeeMessage(serverMsg);
 
@@ -177,15 +187,18 @@ void updateAgentState(std::string serverMsg) {
     // Necesitamos al menos 2 banderas para triangular
     std::vector<SeenObject> usefulFlags;
 
-    for (const auto& obj : visualData) {
+    for (const auto &obj : visualData)
+    {
         // Solo nos interesan objetos que empiecen por 'f' (flags) o 'g' (goals)
         // Ignoramos 'b' (ball) y 'p' (players) para localizarse
-        if (obj.get_name()[0] == 'f' || obj.get_name()[0] == 'g') {
+        if (obj.get_name()[0] == 'f' || obj.get_name()[0] == 'g')
+        {
             usefulFlags.push_back(obj);
         }
     }
 
-    if (usefulFlags.size() < 2) {
+    if (usefulFlags.size() < 2)
+    {
         return;
     }
 
@@ -196,7 +209,7 @@ void updateAgentState(std::string serverMsg) {
     Vector2D<double> pos1 = FieldMap::getFlagPos(obs1.get_name());
     Vector2D<double> pos2 = FieldMap::getFlagPos(obs2.get_name());
 
-    // Nota: El parser nos dio ángulos, pero para trilateración pura 
+    // Nota: El parser nos dio ángulos, pero para trilateración pura
     // solo necesitamos las distancias (radios).
     // Usamos los ángulos después para saber la orientación del cuerpo.
 
