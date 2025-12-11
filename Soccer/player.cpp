@@ -1,14 +1,17 @@
 #include "player.h"
 #include <regex>
+#include "vector2D.h"
+#include "trilaterate_utils.h"
+#include "seen_object.h"
+#include <vector>
 
-/*
-void Player::actualizarEstadoVisual(string serverMsg)
+void Player::actualizarEstadoVisual(const std::string &serverMsg)
 {
-    vector<SeenObject> visualData = MessageParser::parseSeeMessage(serverMsg);
-    vector<SeenObject> usefulFlags;
+    std::vector<SeenObject> visualData = MessageParser::parseSeeMessage(serverMsg);
+    std::vector<SeenObject> usefulFlags;
     for (const auto &obj : visualData)
     {
-        if (obj.name[0] == 'f' || obj.name[0] == 'g')
+        if (obj.get_name()[0] == 'f' || obj.get_name()[0] == 'g')
         {
             usefulFlags.push_back(obj);
         }
@@ -20,12 +23,12 @@ void Player::actualizarEstadoVisual(string serverMsg)
     }
     SeenObject obs1 = usefulFlags[0];
     SeenObject obs2 = usefulFlags[1];
-    Vector2D<double> p1 = FieldMap::getFlagPos(obs1.name);
-    Vector2D<double> p2 = FieldMap::getFlagPos(obs2.name);
-    auto solutions = LocalizationUtils::trilaterate(p1, obs1.dist, p2, obs2.dist);
+    Vector2D<double> p1 = FieldMap::getFlagPos(obs1.get_name());
+    Vector2D<double> p2 = FieldMap::getFlagPos(obs2.get_name());
+    auto solutions = LocalizationUtils::trilaterate(p1, obs1.get_dist(), p2, obs2.get_dist());
     if (!solutions.empty())
     {
-        this->posicionGlobal = solutions[0];
+        posicionGlobal = solutions[0];
         this->posicionEsValida = true;
     }
     else
@@ -33,7 +36,6 @@ void Player::actualizarEstadoVisual(string serverMsg)
         this->posicionEsValida = false;
     }
 }
-*/
 
 std::vector<std::string> Player::posicionesIniciales = {
     "",               // vacio
@@ -50,7 +52,7 @@ std::vector<std::string> Player::posicionesIniciales = {
     "(move -10 28)"   // Extremo Izquierdo
 };
 
-void Player::parseInit(std::string msg)
+void Player::parseInit(const std::string &msg)
 {
     std::istringstream iss(msg);
     std::string initWord;
@@ -86,7 +88,7 @@ void Player::decision(const std::string &msg)
         case 3:
         case 4:
         case 5: // Defensas
-
+            
             break;
 
         case 6:

@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-// #include "trilaterate.cpp"
+#include "vector2D.h"
 
 class Player
 {
@@ -22,9 +22,9 @@ public:
     void setSide(const std::string &s) { side = s; }
     void setCommand(const std::string &s) { command = s; }
 
-    void actualizarEstadoVisual(std::string serverMsg);
+    void actualizarEstadoVisual(const std::string &serverMsg);
 
-    void parseInit(std::string msg);
+    void parseInit(const std::string &msg);
 
     void posicionInicial() { command = posicionesIniciales.at(std::stoi(unum)); }
 
@@ -32,7 +32,7 @@ public:
 
 private:
     std::string unum, playmode, side, command;
-    // Vector2D<double> posicionGlobal;
+    Vector2D<double> posicionGlobal;
     bool posicionEsValida = false;
 
     static std::vector<std::string> posicionesIniciales;
