@@ -15,6 +15,6 @@ sleep 3
 for i in {0..10}
 do
   PORT=$((PORT_START + i))
-  gnome-terminal -- bash -c "./player $TEAM_NAME $PORT" &
+  gnome-terminal -- bash -c "./player $TEAM_NAME $PORT $i" &
   sleep 1
 done

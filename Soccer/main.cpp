@@ -1,147 +1,151 @@
-#include <iostream>
-#include <sstream>
-#include <string>
+#include "tictoc.h"
+#include "types.h"
+#include "msg_parser.h"
+#include "player_controller.h"
 #include <MinimalSocket/udp/UdpSocket.h>
-#include <vector>
-#include <regex>
-#include "seen_object.h"
-#include "player.h"
-#include "hear_message.h"
+#include <iostream>
+#include <string>
 
 using namespace std;
 
-bool isSeeComand(const string &s)
+void imprimir_vistas(const std::vector<FieldObject> &flags_vistas,
+                     const std::vector<PlayerObject> &jugadores_vistos)
 {
-    std::regex seeRegex("^\\(see\\s");
-    return std::regex_search(s, seeRegex);
-}
-
-bool isHearComand(const string &s)
-{
-    std::regex seeRegex("^\\(hear\\s");
-    return std::regex_search(s, seeRegex);
-}
-
-// main with two args
-int main(int argc, char *argv[])
-{
-    // check if the number of arguments is correct
-    if (argc != 3)
+    std::cout << "Flags vistas:\n";
+    for (const auto &flag : flags_vistas)
     {
-        cout << "Usage: " << argv[0] << " <team-name> <this-port>" << endl;
-        return 1;
+        std::cout << flag.get_name() << '\n';
     }
 
-    // get the team name and the port
+    std::cout << "\nJugadores vistos:\n";
+    for (const auto &jugador : jugadores_vistos)
+    {
+        std::cout << jugador.get_team() << ' ' << jugador.get_dist() << ' ' << jugador.get_angulo() << "\n";
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    /******************************************** Conexion con el servidor ****************************************************/
+    if (argc != 4)
+    {
+        cout << "Usage: " << argv[0] << " <team-name> <this-port> <player-num>" << endl;
+        return 1;
+    }
     string team_name = argv[1];
     MinimalSocket::Port this_socket_port = std::stoi(argv[2]);
-
+    string proc_id = argv[3];
     cout << "Creating a UDP socket" << endl;
-
     MinimalSocket::udp::Udp<true> udp_socket(this_socket_port, MinimalSocket::AddressFamily::IP_V6);
-
     cout << "Socket created" << endl;
-
     bool success = udp_socket.open();
-
     if (!success)
     {
         cout << "Error opening socket" << endl;
         return 1;
     }
-
     MinimalSocket::Address other_recipient_udp = MinimalSocket::Address{"127.0.0.1", 6000};
-    cout << "(init " + team_name + "(version 19))";
-
-    udp_socket.sendTo("(init " + team_name + "(version 19))", other_recipient_udp);
+    string init_msg{"(init " + team_name + " (version 19) "};
+    if (proc_id == "0")
+        init_msg += "(goalie)";
+    cout << init_msg + ")" << endl;
+    udp_socket.sendTo(init_msg + ")", other_recipient_udp);
     cout << "Init Message sent" << endl;
-
     std::size_t message_max_size = 1000;
     cout << "Waiting for a message" << endl;
+    /******************************************** Recibir mensaje init ********************************************************/
     auto received_message = udp_socket.receive(message_max_size);
     std::string received_message_content = received_message->received_message;
-
-    Player player;
-    player.parseInit(received_message_content);
-
+    Player player{team_name, received_message_content};
+    cout << "Jugador: " << player.get_unum() << std::endl;
+    cout << "Equipo: " << player.get_team_name() << std::endl;
+    cout << "Lado: " << player.get_side() << std::endl;
+    cout << "Playmode: " << player.get_playmode() << std::endl;
+    cout << "Porteria objetivo: " << player.get_porteria_objetivo() << std::endl;
     MinimalSocket::Address other_sender_udp = received_message->sender;
     MinimalSocket::Address server_udp = MinimalSocket::Address{"127.0.0.1", other_sender_udp.getPort()};
-
-    player.posicionInicial();
-    udp_socket.sendTo(player.getCommand(), server_udp);
-
-    SeenObject balon("b");
-    SeenObject porteriaDer("g r");
-    SeenObject porteriaIzq("g l");
-
+    /****************************************** Mandar posicion inicial *******************************************************/
+    udp_socket.sendTo(player.get_posicion_inicial(), server_udp);
+    TicToc clock;
+    clock.tic();
+    unsigned long cycle = 0;
+    bool posicionados{false};
     while (true)
     {
         auto received_message = udp_socket.receive(message_max_size);
-        std::string received_message_content = received_message->received_message;
-        player.actualizarEstadoVisual(received_message_content);
+        auto msg_content{received_message->received_message};
 
-        if (isSeeComand(received_message_content))
+        if (isHearCommand(msg_content))
         {
-            Vector2D posicion_deseada{0.0, 0.0};
-
-            udp_socket.sendTo(player.irA(posicion_deseada), server_udp);
+            HearMessage msg;
+            msg.parseHear(msg_content);
+            if (msg.sender == "referee")
+                player.setPlaymode(msg.message);
         }
-    }
-
-    /*while (true)
-    {
-        auto received_message = udp_socket.receive(message_max_size);
-        std::string received_message_content = received_message->received_message;
-
-        if (isSeeComand(received_message_content))
+        else if (isSeeCommand(msg_content))
         {
-            // actualizar todas las posiciones de todo el campo
-
-            //player.decision(received_message_content);
-            /*porteriaDer.parse_message(received_message_content);
-            porteriaIzq.parse_message(received_message_content);*/
-
-    /*player.decision(posiciones_relativas);
-
-    if (balon.parse_message(received_message_content))
-    {
-        if (balon.get_angle() >= -10.0 && balon.get_angle() <= 10.0)
-        {
-            if (std::abs(balon.get_dist()) > 1)
+            parseSeeMessage(msg_content, player);
+            imprimir_vistas(player.get_flags_vistas(), player.get_jugadores_vistos());
+            std::string comando{};
+            if (player.get_playmode().find("kick_off_") != string::npos)
             {
-                std::string turn_command = "(dash 75)";
-
-                udp_socket.sendTo(turn_command, server_udp);
+                if ((player.get_playmode() == "kick_off_l" && player.get_side() == 'l') || (player.get_playmode() == "kick_off_r" && player.get_side() == 'r'))
+                    comando = std::move(controlSaque(player));
+                else
+                {
+                    auto balon = player.get_balon();
+                    if (!balon.es_visible())
+                        comando = "(turn 25)";
+                    else
+                        comando = "(turn " + to_string(balon.get_angulo()) + ")";
+                }
             }
-            else
+            else if (player.get_playmode().find("goal_") != string::npos)
+                comando = player.get_posicion_inicial();
+            else if (player.get_playmode() == "play_on")
             {
-                double angle_to_goal = (player.getSide() == "l") ? porteriaDer.get_angle() : porteriaIzq.get_angle();
-                std::string kick_cmd = "(kick 100 " + std::to_string(angle_to_goal) + ")";
-                udp_socket.sendTo(kick_cmd, server_udp);
+
+                switch (player.get_unum())
+                {
+                case 1:
+                    comando = controlPortero(player);
+                    break;
+
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    comando = controlDefensa(player);
+                    break;
+
+                case 6:
+                case 10:
+                case 8:
+                    comando = controlCentrocampista(player);
+                    break;
+
+                case 9:
+                case 7:
+                case 11:
+                    comando = controlDelantero(player);
+                    break;
+
+                default:
+                    break;
+                }
             }
+            else if (player.get_playmode().find("kick_in") != std::string::npos ||
+                     player.get_playmode().find("corner_kick") != std::string::npos ||
+                     player.get_playmode().find("goal_kick") != std::string::npos ||
+                     player.get_playmode().find("free_kick") != std::string::npos ||
+                     player.get_playmode().find("offside") != std::string::npos ||
+                     player.get_playmode().find("foul_") != std::string::npos ||
+                     player.get_playmode().find("penalty_kick") != std::string::npos ||
+                     player.get_playmode().find("back_pass") != std::string::npos ||
+                     player.get_playmode().find("illegal_defense") != std::string::npos)
+                comando = controlBalonParado(player);
+
+            udp_socket.sendTo(comando, server_udp);
         }
-        else
-        {
-            udp_socket.sendTo("(turn 15)", server_udp);
-        }
     }
-    else
-    {
-        std::string turn_command = "(turn 25)";
-        udp_socket.sendTo(turn_command, server_udp);
-    }
-}
-else if (isHearComand(received_message_content))
-{
-    HearMessage msg{};
-    msg.parseHear(received_message_content);
-    if (msg.sender == "referee")
-    {
-        player.setPlaymode(msg.message);
-    }
-    std::cout << player.getPlaymode() << std::endl;
-}
-}
-*/
-    return 0;
 }

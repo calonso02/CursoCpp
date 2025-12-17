@@ -26,14 +26,11 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/_deps/min_sock-src/build)
 # Set source files
 set(SOURCE_FILES
     main.cpp 
-    #stringutils.cpp 
-    #parsemessages.cpp
-    #parseseemessages.cpp
-    #parsehearmessages.cpp
-    #types.cpp
-    #Stictoc.cpp
-    seen_object.cpp
-    player.cpp
+    tictoc.cpp
+    msg_parser.cpp
+    types.cpp
+    player_controller.cpp
+    trilaterate.cpp
 )
 
 add_executable(player ${SOURCE_FILES})
