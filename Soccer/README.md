@@ -1,9 +1,7 @@
-<h1>Grupo Los Leones</h1>
+<h1>Entregas</h1>
 
-<h2>Integrantes:</h2>
-<ul>
-  <li>Juan Francisco Gonzalez Arenas</li>
-  <li>Miguel López Cordero</li>
-  <li>Carlos Laguna Téllez</li>
-  <li>Cándido Alonso Barro</li>
-</ul>
+<a href="https://youtu.be/RnSIzN6QPj8" target="_blank">Tarea 1</a>
+<br>
+<a href="https://youtu.be/Cht93-X8mbc" target="_blank">Tarea 2</a>
+<br>
+<a href="https://www.youtube.com/watch?v=d2iWqc8enDo" target="_blank">Tarea 3</a>
